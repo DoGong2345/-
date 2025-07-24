@@ -4,57 +4,91 @@
   <meta charset="UTF-8">
   <title>간단 타이머</title>
   <style>
-    body { font-family: sans-serif; text-align: center; margin-top: 60px; }
-    .timer { font-size: 2rem; margin: 20px 0; }
-    button { font-size: 1rem; margin: 0 5px; padding: 8px 16px; }
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+    }
+    .timer-card {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      max-width: 400px;
+      margin: 60px auto;
+      padding: 32px 24px 24px 24px;
+      text-align: center;
+    }
+    .timer {
+      font-size: 2rem;
+      margin: 20px 0;
+      font-family: 'Roboto Mono', 'Consolas', 'Menlo', 'Monaco', monospace;
+      font-variant-numeric: tabular-nums;
+    }
+    .timer-btn {
+      font-size: 1rem;
+      margin: 0 5px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      background: #a8edea;
+      color: #333;
+      cursor: pointer;
+      transition: background 0.2s;
+      min-width: 100px;
+    }
+    .timer-btn:hover {
+      background: #fed6e3;
+    }
   </style>
 </head>
 <body>
-  <h2>간단 타이머</h2>
-  <div class="timer" id="timer">0.00초</div>
-  <button onclick="start()">시작</button>
-  <button id="pauseBtn" onclick="togglePause()">일시정지</button>
-  <button onclick="reset()">리셋</button>
-  <button onclick="recordTime()">클릭 시간 기록</button>
-  <div id="record-list" style="margin-top:20px;"></div>
+  <div class="timer-card">
+    <h2>간단 타이머</h2>
+    <div class="timer" id="timer">0.00초</div>
+    <button class="timer-btn" onclick="toggleTimer()" id="toggleBtn">시작    </button>
+    <button class="timer-btn" onclick="reset()">리셋</button>
+    <button class="timer-btn" onclick="recordTime()">기록</button>
+    <div id="record-list" style="margin-top:20px;text-align:left;"></div>
+  </div>
   <script>
     let seconds = 0;
     let interval = null;
+    let isRunning = false;
     function update() {
       document.getElementById('timer').textContent = seconds.toFixed(2) + '초';
     }
-    function start() {
-      if (interval) return;
-      interval = setInterval(() => {
-        seconds = Math.round((seconds + 0.01) * 100) / 100;
-        update();
-      }, 10);
-    }
-    function pause() {
-      clearInterval(interval);
-      interval = null;
-    }
-    function start() {
-      if (interval) return;
-      interval = setInterval(() => {
-        seconds = Math.round((seconds + 0.01) * 100) / 100;
-        update();
-      }, 10);
-    }
-
-    function togglePause() {
-      const btn = document.getElementById('pauseBtn');
-      if (interval) {
+    function toggleTimer() {
+      const btn = document.getElementById('toggleBtn');
+      if (isRunning) {
         clearInterval(interval);
         interval = null;
-        btn.textContent = '계속';
+        isRunning = false;
+        btn.textContent = '시작    ';
       } else {
         interval = setInterval(() => {
           seconds = Math.round((seconds + 0.01) * 100) / 100;
           update();
         }, 10);
+        isRunning = true;
         btn.textContent = '일시정지';
       }
+    }
+    function reset() {
+      clearInterval(interval);
+      interval = null;
+      isRunning = false;
+      seconds = 0;
+      update();
+      document.getElementById('toggleBtn').textContent = '시작';
+      document.getElementById('record-list').innerHTML = '';
+    }
+    function recordTime() {
+      const recordList = document.getElementById('record-list');
+      const p = document.createElement('div');
+      p.textContent = '기록: ' + seconds.toFixed(2) + '초';
+      recordList.appendChild(p);
     }
     update();
   </script>
