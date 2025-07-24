@@ -13,7 +13,7 @@
   <h2>간단 타이머</h2>
   <div class="timer" id="timer">0.00초</div>
   <button onclick="start()">시작</button>
-  <button onclick="pause()">일시정지</button>
+  <button id="pauseBtn" onclick="togglePause()">일시정지</button>
   <button onclick="reset()">리셋</button>
   <button onclick="recordTime()">클릭 시간 기록</button>
   <div id="record-list" style="margin-top:20px;"></div>
@@ -34,17 +34,27 @@
       clearInterval(interval);
       interval = null;
     }
-    function reset() {
-      pause();
-      seconds = 0;
-      update();
-      document.getElementById('record-list').innerHTML = '';
+    function start() {
+      if (interval) return;
+      interval = setInterval(() => {
+        seconds = Math.round((seconds + 0.01) * 100) / 100;
+        update();
+      }, 10);
     }
-    function recordTime() {
-      const recordList = document.getElementById('record-list');
-      const p = document.createElement('div');
-      p.textContent = '기록: ' + seconds.toFixed(2) + '초';
-      recordList.appendChild(p);
+
+    function togglePause() {
+      const btn = document.getElementById('pauseBtn');
+      if (interval) {
+        clearInterval(interval);
+        interval = null;
+        btn.textContent = '계속';
+      } else {
+        interval = setInterval(() => {
+          seconds = Math.round((seconds + 0.01) * 100) / 100;
+          update();
+        }, 10);
+        btn.textContent = '일시정지';
+      }
     }
     update();
   </script>
